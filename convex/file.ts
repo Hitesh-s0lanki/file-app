@@ -52,6 +52,14 @@ export const get = query({
 export const remove = mutation({
     args: { id: v.id("folders") },
     handler: async (ctx, args) => {
+
+        const folder = await ctx.db.get(args.id)
+
+        if (!folder) throw new Error("unauthoried")
+
+        folder.files.map(async (file) => await ctx.storage.delete(file.url))
+
+
         await ctx.db.delete(args.id)
     }
 })
