@@ -52,12 +52,12 @@ const DetailTable = ({ id }: { id: string }) => {
       .catch(() => toast.error("Failed to delete file"));
   };
 
-  const handleDownload = (id: Id<"_storage">) => {
+  const handleDownload = (id: Id<"_storage">, name: string) => {
     downUrl({
       id,
     })
       .then((response) => {
-        download(response, id);
+        download(response, name);
       })
       .catch(() => toast.error("Failed to delete file"));
   };
@@ -101,7 +101,9 @@ const DetailTable = ({ id }: { id: string }) => {
                 <div className="w-full flex justify-end items-center gap-4">
                   <DownloadIcon
                     className=" hover:text-green-700"
-                    onClick={() => handleDownload(file.url as Id<"_storage">)}
+                    onClick={() =>
+                      handleDownload(file.url as Id<"_storage">, file.name)
+                    }
                   />
                   <Trash2Icon
                     className=" hover:text-rose-700 cursor-pointer"
