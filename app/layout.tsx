@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import ConvexClientProvider from "@/components/convex-provider";
+import ModalProvider from "@/components/modal-provider";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +19,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <Suspense
+          fallback={
+            <div className="h-full w-full flex justify-center items-center">
+              Loading...
+            </div>
+          }
+        >
+          <ConvexClientProvider>
+            <ModalProvider />
+            {children}
+          </ConvexClientProvider>
+        </Suspense>
+      </body>
     </html>
   );
 }
