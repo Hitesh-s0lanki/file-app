@@ -6,7 +6,7 @@ interface ImageViewProps {
   imageFiles: downloadData[];
 }
 
-const ImageView = memo(({ imageFiles }: ImageViewProps) => {
+export const ImageView = memo(({ imageFiles }: ImageViewProps) => {
   return (
     <div className="w-full grid grid-cols-4 gap-5">
       {imageFiles.map((image) => (
@@ -28,4 +28,4 @@ const ImageView = memo(({ imageFiles }: ImageViewProps) => {
   );
 });
 
-export default ImageView;
+ImageView.displayName = "ImageView";

@@ -19,7 +19,7 @@ import { useApiMutation } from "@/hooks/use-api-mutation";
 import { toast } from "sonner";
 import useDownloader from "react-use-downloader";
 import Loading from "./loading";
-import ImageView from "./view-image";
+import { ImageView } from "./view-image";
 
 export type downloadData = {
   name: string;
@@ -91,7 +91,7 @@ const DetailTable = ({ id }: { id: string }) => {
       }) || [];
 
     setData(data);
-  }, [folder?.files]);
+  }, [folder?.files, downUrl]);
 
   useEffect(() => {
     getFiles();
