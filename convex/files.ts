@@ -1,6 +1,26 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
 
+export const getFilesUrl = mutation({
+    args: {
+        ids: v.array(v.id("_storage"))
+    },
+    handler: async (ctx, args) => {
+        const ans: string[] = []
+
+        for (const id of args.ids) {
+            const url = await ctx.storage.getUrl(id)
+
+            if (url) {
+                ans.push(url)
+            }
+        }
+
+        return ans
+    }
+})
+
+
 export const getFileUrl = mutation({
     args: {
         id: v.id("_storage")

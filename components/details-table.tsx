@@ -38,7 +38,7 @@ const DetailTable = ({ id }: { id: string }) => {
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const saveStorageId = useMutation(api.files.saveStorageId);
   const { mutate } = useApiMutation(api.files.deleteFile);
-  const { mutate: downUrl } = useApiMutation(api.files.getFileUrl);
+  const { mutate: downUrl } = useApiMutation(api.files.getFilesUrl);
 
   const { download } = useDownloader();
 
@@ -74,24 +74,25 @@ const DetailTable = ({ id }: { id: string }) => {
   };
 
   const getFiles = useCallback(() => {
-    const data =
-      folder?.files?.map((file) => {
-        const obj: downloadData = {
-          ...file,
-          link: "",
-        };
+    if (!folder || !folder.files) {
+      console.log("here");
+      setData([]);
+      return;
+    }
 
-        downUrl({
-          id: file.url as Id<"_storage">,
-        }).then((response) => {
-          obj.link = response;
-        });
+    downUrl({
+      ids: folder.files.map((file) => file.url as Id<"_storage">),
+    })
+      .then((response: string[]) => {
+        const ans = response.map((link, index) => ({
+          ...folder.files[index],
+          link,
+        }));
 
-        return obj;
-      }) || [];
-
-    setData(data);
-  }, [folder?.files, downUrl]);
+        setData(ans);
+      })
+      .catch(() => toast.error("Something went wrong"));
+  }, [folder, setData]);
 
   useEffect(() => {
     getFiles();
@@ -118,7 +119,6 @@ const DetailTable = ({ id }: { id: string }) => {
                     alert(`ERROR! ${error}`);
                   }}
                 />
-                <Button variant="outline">Download</Button>
               </div>
             </TableHead>
           </TableRow>
@@ -146,7 +146,7 @@ const DetailTable = ({ id }: { id: string }) => {
             ))}
         </TableBody>
       </Table>
-      {folder && data.length !== 0 && (
+      {folder && data.length !== 0 && data[0].link !== "" && (
         <ImageView imageFiles={data.filter((file) => regex.test(file.name))} />
       )}
     </div>

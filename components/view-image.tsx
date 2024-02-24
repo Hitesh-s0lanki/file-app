@@ -19,9 +19,10 @@ export const ImageView = memo(({ imageFiles }: ImageViewProps) => {
             alt={image.name}
             height={100}
             width={200}
-            className=" h-72 w-full rounded-md"
+            className=" h-52 w-full rounded-md"
           />
           <p className=" text-muted-foreground text-center p-2">{image.name}</p>
+          <p className=" text-muted-foreground text-center p-2">{image.link}</p>
         </div>
       ))}
     </div>
