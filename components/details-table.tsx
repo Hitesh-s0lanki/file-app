@@ -8,8 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DownloadIcon, Trash2Icon } from "lucide-react";
-import { Button } from "./ui/button";
+import { Download, FolderOpen, Loader2, Trash } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -17,9 +16,9 @@ import { Id } from "@/convex/_generated/dataModel";
 import { UploadButton, UploadFileResponse } from "@xixixao/uploadstuff/react";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { toast } from "sonner";
-import useDownloader from "react-use-downloader";
 import Loading from "./loading";
 import { ImageView } from "./view-image";
+import Link from "next/link";
 
 export type downloadData = {
   name: string;
@@ -39,8 +38,6 @@ const DetailTable = ({ id }: { id: string }) => {
   const saveStorageId = useMutation(api.files.saveStorageId);
   const { mutate } = useApiMutation(api.files.deleteFile);
   const { mutate: downUrl } = useApiMutation(api.files.getFilesUrl);
-
-  const { download } = useDownloader();
 
   const saveAfterUpload = async (uploaded: UploadFileResponse[]) => {
     setPending(true);
@@ -65,13 +62,6 @@ const DetailTable = ({ id }: { id: string }) => {
       .catch(() => toast.error("Failed to delete file"));
   };
 
-  const handleDownload = (link: string, name: string) => {
-    setPending(true);
-
-    download(link, name)
-      .catch(() => toast.error("Something went wrong"))
-      .finally(() => setPending(false));
-  };
 
   const getFiles = useCallback(() => {
     if (!folder || !folder.files) {
@@ -103,13 +93,19 @@ const DetailTable = ({ id }: { id: string }) => {
   }
 
   return (
-    <div className="h-full w-full flex flex-col gap-5">
+    <div className="h-full w-full flex flex-col gap-5 p-8 overflow-auto">
+      <div className=" flex gap-5 items-center w-full">
+        <h1 className=" text-xl font-semibold flex gap-2 items-center">
+          <FolderOpen className=" size-8" />
+          {folder.title}
+        </h1>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Sr.no</TableHead>
-            <TableHead>File Name</TableHead>
-            <TableHead className="text-right">
+            <TableHead className="w-[100px] py-1">Sr.no</TableHead>
+            <TableHead className="py-1">File Name</TableHead>
+            <TableHead className="text-right py-1">
               <div className="flex gap-2 justify-end items-center p-3">
                 <UploadButton
                   uploadUrl={generateUploadUrl}
@@ -128,16 +124,21 @@ const DetailTable = ({ id }: { id: string }) => {
             data &&
             data.map((file, index) => (
               <TableRow key={file.name}>
-                <TableCell className="font-medium">{index + 1}.</TableCell>
-                <TableCell>{file.name}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="font-medium py-2">{index + 1}.</TableCell>
+                <TableCell className="py-2">{file.name}</TableCell>
+                <TableCell className="text-right py-2">
                   <div className="w-full flex justify-end items-center gap-4">
-                    <DownloadIcon
-                      className=" hover:text-green-700"
-                      onClick={() => handleDownload(file.link, file.name)}
-                    />
-                    <Trash2Icon
-                      className=" hover:text-rose-700 cursor-pointer"
+                    <Link
+                      href={file.link}
+                      target="_blank"
+                      download
+                    >
+                      <Download
+                        className=" hover:text-green-700 size-4"
+                      />
+                    </Link>
+                    <Trash
+                      className=" hover:text-rose-700 cursor-pointer size-4"
                       onClick={() => handleDelete(file.url as Id<"_storage">)}
                     />
                   </div>

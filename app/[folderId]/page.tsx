@@ -8,9 +8,7 @@ interface FolderPageProps {
 
 const FolderPage = ({ params }: FolderPageProps) => {
   return (
-    <div className="h-full w-full flex justify-center p-10">
-      <DetailTable id={params.folderId} />
-    </div>
+    <DetailTable id={params.folderId} />
   );
 };
 
